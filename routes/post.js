@@ -151,7 +151,6 @@ router.delete('/deletepost/:postId',requirelog,(req,res)=>{
 router.delete('/deletecomment/:postId/:commentId',requirelog, (req,res)=>{
 
         Post.findOne({_id:req.params.postId})
-        .populate("comments.commentedBy", "_id name")
         .populate("postedBy", "_id name")
         .exec((error, post)=>{
             if(error || !post){
