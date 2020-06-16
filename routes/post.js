@@ -128,6 +128,7 @@ router.delete('/deletepost/:postId',requirelog,(req,res)=>{
     Post.findOne({_id:req.params.postId})
     .populate("postedBy","_id")
     .exec((error, post)=>{
+        console.log(post)
         if(error || !post){
            
             return res.status(422).json({
@@ -146,6 +147,31 @@ router.delete('/deletepost/:postId',requirelog,(req,res)=>{
         }
     })
 })
+
+router.delete('/deletecomment/:postId/:commentId',requirelog, (req,res)=>{
+
+        Post.findOne({_id:req.params.postId})
+        .populate("comments.commentedBy", "_id name")
+        .populate("postedBy", "_id name")
+        .exec((error, post)=>{
+            if(error || !post){
+                return res.status(404).json({error:"post not avilable"})
+            }
+
+            post.comments = post.comments.filter(comment => {
+                return comment._id != req.params.commentId
+            })
+
+            post.save()
+            .then(result=>{
+                return res.json(result)
+            }).catch(error=>{
+                console.log(error)
+            })
+            
+        })
+})
+
 
 
 module.exports = router
