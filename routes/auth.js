@@ -7,9 +7,7 @@ const jwt =require('jsonwebtoken')
 const {JWT_SECRET} = require('../config/keys')
 const requirelog = require('../middleware/requirelog')
 
-router.get('/',(req,res)=>{
-    res.send('Hello from router')
-})
+
 
 router.get('/protected',requirelog,(req,res)=>{
     res.send('Hello user')
