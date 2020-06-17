@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const User = mongoose.model("User")
 const bcrypt = require('bcryptjs')
 const jwt =require('jsonwebtoken')
-const {JWT_SECRET} = require('../keys')
+const {JWT_SECRET} = require('../config/keys')
 const requirelog = require('../middleware/requirelog')
 
 router.get('/',(req,res)=>{
@@ -16,7 +16,7 @@ router.get('/protected',requirelog,(req,res)=>{
 })
 
 router.post('/signup',(req,res)=>{
-    const {name, email, password} = req.body
+    const {name, email, password,pic} = req.body
     console.log(req.body)
     if(!email || !password || !name){
       return res.status(422).json({error:'Please add all the fields'})
@@ -35,7 +35,8 @@ router.post('/signup',(req,res)=>{
             const user = new User({
                 email,
                 password:hashedpassword,
-                name
+                name,
+                pic
             })
     
             user.save()
@@ -79,13 +80,16 @@ router.post('/signin',(req,res)=>{
                 //     message:'Successfully signed in'
                 // })
                 const token = jwt.sign({_id:savedUser._id},JWT_SECRET)
-                const  {_id, name, email} = savedUser
+                const  {_id, name, email,followers, following,pic} = savedUser
                 res.json({
                     token,
                     user:{
                         _id,
                         name,
-                        email
+                        email,
+                        followers,
+                        following,
+                        pic
                     }
 
                 })
