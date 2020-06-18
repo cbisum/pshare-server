@@ -137,7 +137,7 @@ router.post('/reset-password',(req,res)=>{
                     subject:'password reset',
                     html:`
                         <p>You request for password reset</p>
-                        <h5>click on this <a  target=”_blank” href="/reset/${token}">link</a> to reset password</h5>
+                        <h5>click on this <a  target=”_blank” href="https://cb-pshare.herokuapp.com//reset/${token}">link</a> to reset password</h5>
                     `
                 })
                 res.json({message:'Check your email'})
