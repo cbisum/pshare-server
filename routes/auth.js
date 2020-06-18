@@ -8,6 +8,7 @@ const {JWT_SECRET} = require('../config/keys')
 const requirelog = require('../middleware/requirelog')
 const nodemailer = require('nodemailer')
 const sendgridtransport = require('nodemailer-sendgrid-transport')
+const crypto = require('crypto')
 
 
 const transporter  = nodemailer.createTransport(sendgridtransport({
@@ -110,6 +111,68 @@ router.post('/signin',(req,res)=>{
         })
 
     })
+})
+
+
+router.post('/reset-password',(req,res)=>{
+    crypto.randomBytes(32,(error,buffer)=>{
+        if(error){
+            console.log(error)
+        }
+
+        const token =  buffer.toString('hex')
+        User.findOne({email:req.body.email})
+        .then(user=>{
+            if(!user){
+                return res.status(422).json({error:"User dont exists with that email"})
+
+            }
+            user.resetToken= token
+            user.expireToken= Date.now()+ 3600000
+            user.save()
+            .then(result=>{
+                transporter.sendMail({
+                    to:user.email,
+                    from:'no-replay@pshare.com',
+                    subject:'password reset',
+                    html:`
+                        <p>You request for password reset</p>
+                        <h5>click on this <a  target=”_blank” href="/reset/${token}">link</a> to reset password</h5>
+                    `
+                })
+                res.json({message:'Check your email'})
+            })
+
+
+        })
+    })
+    
+})
+
+router.post('/new-password',(req,res)=>{
+    const newPassword = req.body.password
+    const sentToken = req.body.token
+
+    User.findOne({resetToken:sentToken, expireToken:{$gt:Date.now()}})
+    .then(user=>{
+        if(!user){
+            return res.status(422).json({error :"session has expired Try again"})
+        }
+
+        bcrypt.hash(newPassword, 12)
+        .then(hassedpassword=>{
+            user.password = hassedpassword
+            user.resetToken = undefined
+            user.expireToken = undefined
+            user.save()
+            .then((saveduser)=>{
+                res.json({message:"password updated"})
+            })
+        })
+    }).catch(error=>{
+        console.log(error)
+    })
+
 })
 
 module.exports = router

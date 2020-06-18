@@ -130,6 +130,9 @@ function Signup() {
               <h5>
                   <Link to='/signin'> Already have an account?</Link>
               </h5>
+              <h6>
+                  <Link to='/reset'>Forgot your password?</Link>
+              </h6>
 
           </div>
       </div>

@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     type:String,
     default:'https://res.cloudinary.com/doxenz7xb/image/upload/v1592369757/download.png'
   },
+  resetToken:String,
+  expireToken:Date,
   followers:[
       {
           type:ObjectId,
