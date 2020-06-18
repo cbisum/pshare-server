@@ -4,16 +4,17 @@ const mongoose = require('mongoose')
 const User = mongoose.model("User")
 const bcrypt = require('bcryptjs')
 const jwt =require('jsonwebtoken')
-const {JWT_SECRET} = require('../config/keys')
+const {JWT_SECRET,SEDNGRID_API,EMAIL} = require('../config/keys')
 const requirelog = require('../middleware/requirelog')
 const nodemailer = require('nodemailer')
 const sendgridtransport = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
 
 
+
 const transporter  = nodemailer.createTransport(sendgridtransport({
     auth:{
-        api_key:"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"
+        api_key:SEDNGRID_API
     }
 }))
 
@@ -137,7 +138,7 @@ router.post('/reset-password',(req,res)=>{
                     subject:'password reset',
                     html:`
                         <p>You request for password reset</p>
-                        <h5>click on this <a  target=”_blank” href="https://cb-pshare.herokuapp.com/reset/${token}">link</a> to reset password</h5>
+                        <h5>click on this <a  target=”_blank” href="${EMAIL}/reset/${token}">link</a> to reset password</h5>
                     `
                 })
                 res.json({message:'Check your email'})

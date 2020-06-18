@@ -2,9 +2,7 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const requirelog = require('../middleware/requirelog')
-const e = require('express')
 const Post = mongoose.model('Post')
-
 
 
 router.get('/allpost',requirelog,(req,res)=>{
